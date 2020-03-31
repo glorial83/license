@@ -1,0 +1,24 @@
+#30년짜리 인증서 생성 (%java_home%\bin\keytool.exe 활용)
+#dn값을 변경한다면 LicenseCreator.java의 X500Principal생성자도 동일하게 변경해주자!!!!!
+# CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN
+
+#개인키 생성
+keytool -genkeypair -keysize 1024 -validity 13650 -alias "privateKey" -keystore "private.key" -storepass "public_password1234" -keypass "private_password1234" -dname "cn=TAKE라이센스발급자_20191205,ou=TAKE,o=TAKE,c=KR"
+
+#인증서 생성
+keytool -exportcert -alias "privateKey" -keystore "private.key" -storepass "public_password1234" -file "certfile.cer"
+
+#공개키 생성
+keytool -import -alias "publicCert" -file "certfile.cer" -keystore "public.key" -storepass "public_password1234"
+
+
+
+위 명령을 실행하면 현재 경로에 private.key, public.key, certfile.cer라는 세 개의 파일이 생성됩니다.
+certfile.cer	인증서파일
+private.key		서버용(파일은 라이센스 파일을 생성하는 데 사용)
+public.key		클라이언트 용(라이센스 파일의 암호를 해독하고 라이센스를 확인합니다)
+
+
+
+라이센스 api는  아래 사이트를 참고 함
+https://juejin.im/post/5b457b2a6fb9a04fb900ba02

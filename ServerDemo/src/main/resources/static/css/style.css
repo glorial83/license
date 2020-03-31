@@ -1,0 +1,21 @@
+body{
+    background: url("../img/3.jpg");
+    animation-name:myfirst;
+    animation-duration:20s;
+    animation-delay:5s;
+    animation-iteration-count:infinite;
+    animation-play-state:running;
+}
+/* @keyframes myfirst
+{
+    0%   {}
+    34%  {background:url("../img/2.jpg");}
+    67%  {background:url("../img/1.jpg");}
+    100% {background:url("../img/3.jpg");}
+} */
+.body{background:url("../img/3.jpg");}
+.form{background: rgba(255,255,255,0.2);width:400px;margin:120px auto;}
+.fa{display: inline-block;top: 27px;left: 6px;position: relative;color: #ccc;}
+input[type="text"],input[type="password"],input[type="date"]{padding-left:30px;}
+textarea{padding-left:50px;}
+.errMsg{color: black;}

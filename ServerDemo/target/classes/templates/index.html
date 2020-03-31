@@ -1,0 +1,191 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>홈</title>
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+    <script href="/datepicker/bootstrap-datepicker.js" th:src="@{/datepicker/bootstrap-datepicker.js}"></script>
+    <link rel="stylesheet" th:href="@{/datepicker/datepicker.css}" />
+
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+    	$('#issuedTime').datepicker();
+    	$('#expiryTime').datepicker();
+
+    	$('#issuedTime').val(formatDate(new Date()));
+    	$('#expiryTime').val('2999-12-31');
+    });
+
+    function generate() {
+        var subject = $("#subject").val();
+        var issuedTime = $("#issuedTime").val();
+        var expiryTime = $("#expiryTime").val();
+        var description = $("#description").val();
+        var ipAddress1 = $("#ipAddress1").val();
+        var ipAddress2 = $("#ipAddress2").val();
+        var ipAddress3 = $("#ipAddress3").val();
+        var ipAddress4 = $("#ipAddress4").val();
+
+        if (subject == null || subject === "") {
+            $("#errMsg").text("발급대상을 입력하십시오!");
+            $("#errMsg").attr("style", "display:block");
+            return;
+        }
+        if (issuedTime == null || issuedTime === "") {
+            $("#errMsg").text("발급일자를 입력하십시오!");
+            $("#errMsg").attr("style", "display:block");
+            return;
+        }
+        if (expiryTime == null || expiryTime === "") {
+            $("#errMsg").text("종료일자를 입력하십시오!");
+            $("#errMsg").attr("style", "display:block");
+            return;
+        }
+
+        var subject = $("#subject").val();
+        var issuedTime = $("#issuedTime").val() + " 00:00:00";
+        var expiryTime = $("#expiryTime").val() + " 00:00:00";
+        var description = $("#description").val();
+
+        var jsonParam = {
+                  "subject"				: subject
+                , "issuedTime"			: issuedTime
+                , "expiryTime"			: expiryTime
+                , "description"			: description
+        };
+
+        var ipAddress = new Array();
+
+        $('input[name="ipAddress"]').each(function(index, item){
+        	if($(item).val() != ''){
+        		ipAddress.push($(item).val());
+        	}
+        });
+
+        if(ipAddress.length > 0){
+	        jsonParam.licenseCheckModel = {"ipAddress" : ipAddress};
+        }else{
+        	alert("서버IP를 입력해주세요.!");
+        }
+
+        $.ajax({
+            url: "/license/generateLicense",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            async: false,
+            data: JSON.stringify(jsonParam),
+            success: function (data) {
+            	console.dir(data.licenses);
+                if (data.result == "ok") {
+                	var btnStr = "";
+                	for(var i = 0 ; i < data.licenses.length ; i++){
+                		btnStr += "<a class=\"btn btn-primary\" href=\"/license/downloadLicense?licenseFileName=" + data.licenses[i].filename + "\">" + data.licenses[i].filedesc + "</a> ";
+                    }
+
+                	//btnStr += "<a class=\"btn btn-primary\" href=\"/license/downloadPublicKey\">publicKey</a> ";
+                	//btnStr += "<a class=\"btn btn-primary\" href=\"/license/downloadProperties?subject=" + jsonParam.subject + "\">license-config.properties</a> ";
+
+                	$("#btnLayer").html(btnStr);
+                    $("#errMsg").attr("style", "display:block");
+                } else {
+                    $("#errMsg").text(data.msg);
+                    $("#errMsg").attr("style", "display:block");
+                }
+            }
+        });
+    }
+
+	function formatDate(date) {
+		var d = new Date(date)
+		, month = '' + (d.getMonth() + 1)
+		, day = '' + d.getDate()
+		, year = d.getFullYear();
+
+		if (month.length < 2)
+			month = '0' + month;
+		if (day.length < 2)
+			day = '0' + day;
+		return [ year, month, day ].join('-');
+	}
+
+
+	function addDays(date, days) {
+		var result = new Date(date);
+		result.setDate(result.getDate() + days);
+		return result;
+	}
+
+	</script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <h2 class="text-center">
+                   	라이센스 생성
+                </h2>
+            </div>
+        </div>
+    </div>
+
+	<div class="container">
+	    <div class="form row">
+	        <div class="form-horizontal col-md-offset-1" id="login_form">
+	            <h3 class="form-title">라이센스 발급정보 입력</h3>
+	            <div class="col-lg-11">
+	                <div class="form-group">
+	                    <i class="fa fa-id-card fa-lg"></i>
+	                    <input class="form-control required" type="text" placeholder="발급대상(영문)" id="subject" name="subject" autofocus="autofocus"/>
+	                </div>
+	                <div class="form-group">
+	                    <i class="fa fa-calendar fa-lg"></i>
+	                    <input class="form-control required" type="date" placeholder="발급일자" id="issuedTime" name="issuedTime" data-date-format="yyyy/mm/dd"/>
+	                </div>
+	                <div class="form-group">
+	                    <i class="fa fa-calendar fa-lg"></i>
+	                    <input class="form-control required" type="date" placeholder="종료일자" id="expiryTime" name="expiryTime" data-date-format="yyyy/mm/dd"/>
+	                </div>
+	                <div class="form-group">
+	                    <i class="fa fa-comment fa-lg"></i>
+	                    <textarea class="form-control required" rows="5" placeholder="비고" id="description" name="description" style="padding-left:30px;"></textarea>
+	                </div>
+	                <div class="form-group">
+	                    <i class="fa fa-server fa-lg"></i>
+	                    <input class="form-control required" type="text" placeholder="서버 IP - 서버용일경우 ip를 입력해주세요." id="ipAddress1" name="ipAddress" autofocus="autofocus" maxlength="20"/>
+	                </div>
+	                <div class="form-group">
+	                    <i class="fa fa-server fa-lg"></i>
+	                    <input class="form-control required" type="text" placeholder="서버 IP - 서버용일경우 ip를 입력해주세요." id="ipAddress2" name="ipAddress" autofocus="autofocus" maxlength="20"/>
+	                </div>
+	                <div class="form-group">
+	                    <i class="fa fa-server fa-lg"></i>
+	                    <input class="form-control required" type="text" placeholder="서버 IP - 서버용일경우 ip를 입력해주세요." id="ipAddress3" name="ipAddress" autofocus="autofocus" maxlength="20"/>
+	                </div>
+	                <div class="form-group">
+	                    <i class="fa fa-server fa-lg"></i>
+	                    <input class="form-control required" type="text" placeholder="서버 IP - 서버용일경우 ip를 입력해주세요." id="ipAddress4" name="ipAddress" autofocus="autofocus" maxlength="20"/>
+	                </div>
+
+	                <div class="form-group col-md-offset-9">
+	                    <button type="submit" class="btn btn-success pull-right" name="submit" onclick="generate()">생성하기</button>
+	                </div>
+
+	                <div class="form-group">
+	                	<div id="btnLayer"></div>
+	                    <span class="errMsg" id="errMsg" style="display: none"></span>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</body>
+</html>

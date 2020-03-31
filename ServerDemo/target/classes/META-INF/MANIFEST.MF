@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: ServerDemo
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: glorial
+Implementation-Vendor-Id: kr.co.takeit
+Build-Jdk: 1.8.0_191-1-ojdkbuild
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/serverdemo
+Created-By: Maven Integration for Eclipse
+

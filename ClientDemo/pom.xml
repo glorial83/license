@@ -23,7 +23,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
         <skipTests>true</skipTests>
-        <junit>4.12</junit>
+        <junit>4.13.1</junit>
         <commons-lang3>3.7</commons-lang3>
         <commons-io>2.6</commons-io>
         <commons-codec>1.11</commons-codec>

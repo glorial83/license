@@ -25,7 +25,7 @@
 		<!-- 테스트 코드 무시 -->
 		<skipTests>true</skipTests>
 		<!-- JUnit 단위 테스트 -->
-		<junit>4.12</junit>
+		<junit>4.13.1</junit>
 		<!-- Apache Commons-->
 		<commons-lang3>3.7</commons-lang3>
 		<commons-io>2.6</commons-io>
